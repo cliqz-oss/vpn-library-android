@@ -9,15 +9,20 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 import android.text.TextUtils;
-
 import de.blinkt.openvpn.R;
 import de.blinkt.openvpn.VpnProfile;
-import org.spongycastle.util.io.pem.PemObject;
-import org.spongycastle.util.io.pem.PemReader;
+import de.blinkt.openvpn.spongycastle.util.io.pem.PemObject;
+import de.blinkt.openvpn.spongycastle.util.io.pem.PemReader;
 
-
-import javax.security.auth.x500.X500Principal;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.cert.Certificate;
@@ -26,10 +31,11 @@ import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Vector;
+
+import javax.security.auth.x500.X500Principal;
 
 public class X509Utils {
 	public static Certificate[] getCertificatesFromFile(String certfilename) throws FileNotFoundException, CertificateException {
@@ -107,15 +113,16 @@ public class X509Utils {
         // More than 3 months display months
         if (timeLeft > 90l* 24 * 3600 * 1000) {
             long months = getMonthsDifference(now, certNotAfter);
-            return res.getQuantityString(R.plurals.months_left, (int) months, months);
+            //return res.getQuantityString(R.plurals.months_left, (int) months, months);
         } else if (timeLeft > 72 * 3600 * 1000) {
             long days = timeLeft / (24 * 3600 * 1000);
-            return res.getQuantityString(R.plurals.days_left, (int) days, days);
+            //return res.getQuantityString(R.plurals.days_left, (int) days, days);
         } else {
             long hours = timeLeft / (3600 * 1000);
 
-            return res.getQuantityString(R.plurals.hours_left, (int)hours, hours);
+            //return res.getQuantityString(R.plurals.hours_left, (int)hours, hours);
         }
+        return "1 day";
     }
 
     public static int getMonthsDifference(Date date1, Date date2) {

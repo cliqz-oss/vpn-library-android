@@ -24,16 +24,7 @@
 
 
 
-    <application
-        android:name=".core.ICSOpenVPNApplication"
-        android:allowBackup="true"
-        android:appCategory="productivity"
-        android:banner="@mipmap/banner_tv"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app"
-        android:supportsRtl="true"
-        android:theme="@style/blinkt"
-        tools:ignore="UnusedAttribute">
+    <application>
 
 
         <meta-data android:name="android.content.APP_RESTRICTIONS"
@@ -208,13 +199,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
-        <provider
-            android:name=".FileProvider"
-            android:authorities="de.blinkt.openvpn.FileProvider"
-            android:exported="true"
-            android:grantUriPermissions="true"
-            tools:ignore="ExportedContentProvider" />
 
         <!--
         <receiver android:name="core.GetRestrictionReceiver">

@@ -5,7 +5,6 @@
 
 package de.blinkt.openvpn.api;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,10 +13,10 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Binder;
 
+import de.blinkt.openvpn.core.Preferences;
+
 import java.util.HashSet;
 import java.util.Set;
-
-import de.blinkt.openvpn.core.Preferences;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 

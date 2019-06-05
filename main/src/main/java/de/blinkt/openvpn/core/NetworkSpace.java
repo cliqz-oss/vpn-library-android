@@ -19,7 +19,6 @@ import java.util.Vector;
 import de.blinkt.openvpn.BuildConfig;
 
 
-
 public class NetworkSpace {
 
     static void assertTrue(boolean f)

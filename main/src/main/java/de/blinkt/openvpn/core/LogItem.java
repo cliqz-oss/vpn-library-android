@@ -27,8 +27,6 @@ import java.util.FormatFlagsConversionMismatchException;
 import java.util.Locale;
 import java.util.UnknownFormatConversionException;
 
-import de.blinkt.openvpn.R;
-
 /**
  * Created by arne on 24.04.16.
  */
@@ -251,8 +249,8 @@ public class LogItem implements Parcelable {
                 return mMessage;
             } else {
                 if (c != null) {
-                    if (mRessourceId == R.string.mobile_info)
-                        return getMobileInfoString(c);
+//                    if (mRessourceId == R.string.mobile_info)
+//                        return getMobileInfoString(c);
                     if (mArgs == null)
                         return c.getString(mRessourceId);
                     else
@@ -270,7 +268,7 @@ public class LogItem implements Parcelable {
                 throw new UnknownFormatConversionException(e.getLocalizedMessage() + getString(null));
             else
                 throw e;
-        } catch (java.util.FormatFlagsConversionMismatchException e) {
+        } catch (FormatFlagsConversionMismatchException e) {
             if (c != null)
                 throw new FormatFlagsConversionMismatchException(e.getLocalizedMessage() + getString(null), e.getConversion());
             else
@@ -323,16 +321,16 @@ public class LogItem implements Parcelable {
             md.update(der);
             byte[] digest = md.digest();
 
-            if (Arrays.equals(digest, VpnStatus.officalkey))
-                apksign = c.getString(R.string.official_build);
-            else if (Arrays.equals(digest, VpnStatus.officaldebugkey))
-                apksign = c.getString(R.string.debug_build);
-            else if (Arrays.equals(digest, VpnStatus.amazonkey))
-                apksign = "amazon version";
-            else if (Arrays.equals(digest, VpnStatus.fdroidkey))
-                apksign = "F-Droid built and signed version";
-            else
-                apksign = c.getString(R.string.built_by, cert.getSubjectX500Principal().getName());
+//            if (Arrays.equals(digest, VpnStatus.officalkey))
+//                apksign = c.getString(R.string.official_build);
+//            else if (Arrays.equals(digest, VpnStatus.officaldebugkey))
+//                apksign = c.getString(R.string.debug_build);
+//            else if (Arrays.equals(digest, VpnStatus.amazonkey))
+//                apksign = "amazon version";
+//            else if (Arrays.equals(digest, VpnStatus.fdroidkey))
+//                apksign = "F-Droid built and signed version";
+//            else
+//                apksign = c.getString(R.string.built_by, cert.getSubjectX500Principal().getName());
 
             PackageInfo packageinfo = c.getPackageManager().getPackageInfo(c.getPackageName(), 0);
             version = packageinfo.versionName;
@@ -344,8 +342,8 @@ public class LogItem implements Parcelable {
         Object[] argsext = Arrays.copyOf(mArgs, mArgs.length);
         argsext[argsext.length - 1] = apksign;
         argsext[argsext.length - 2] = version;
-
-        return c.getString(R.string.mobile_info, argsext);
+        return "hi";
+        //return c.getString(R.string.mobile_info, argsext);
 
     }
 

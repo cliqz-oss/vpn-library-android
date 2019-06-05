@@ -22,8 +22,6 @@ import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
 import java.util.Locale;
 
-import de.blinkt.openvpn.R;
-
 /**
  * Created by arne on 23.01.16.
  */
@@ -138,7 +136,7 @@ class LogFileHandler extends Handler {
             readCacheContents(log);
             log.close();
 
-        } catch (java.io.IOException | java.lang.RuntimeException e) {
+        } catch (IOException | RuntimeException e) {
             VpnStatus.logError("Reading cached logfile failed");
             VpnStatus.logException(e);
             e.printStackTrace();
@@ -211,7 +209,7 @@ class LogFileHandler extends Handler {
             }
 
         }
-        VpnStatus.logDebug(R.string.reread_log, itemsRead);
+        //VpnStatus.logDebug(R.string.reread_log, itemsRead);
     }
 
     protected void restoreLogItem(byte[] buf, int len) throws UnsupportedEncodingException {

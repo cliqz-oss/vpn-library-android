@@ -13,11 +13,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.VpnService;
-import android.os.Binder;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -26,26 +22,24 @@ import android.os.ParcelFileDescriptor;
 import android.os.RemoteCallbackList;
 import android.os.RemoteException;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.lang.ref.WeakReference;
-import java.util.LinkedList;
-import java.util.List;
-
-import de.blinkt.openvpn.R;
+import de.blinkt.openvpn.core.IOpenVPNServiceInternal;
+import de.blinkt.openvpn.LaunchVPN;
 import de.blinkt.openvpn.VpnProfile;
 import de.blinkt.openvpn.core.ConfigParser;
-import de.blinkt.openvpn.core.ConfigParser.ConfigParseError;
 import de.blinkt.openvpn.core.ConnectionStatus;
-import de.blinkt.openvpn.core.IOpenVPNServiceInternal;
 import de.blinkt.openvpn.core.OpenVPNService;
 import de.blinkt.openvpn.core.ProfileManager;
 import de.blinkt.openvpn.core.VPNLaunchHelper;
 import de.blinkt.openvpn.core.VpnStatus;
-import de.blinkt.openvpn.core.VpnStatus.StateListener;
+
+import java.io.IOException;
+import java.lang.ref.WeakReference;
+import java.util.LinkedList;
+import java.util.List;
+
 
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
-public class ExternalOpenVPNService extends Service implements StateListener {
+public class ExternalOpenVPNService extends Service implements VpnStatus.StateListener {
 
     private static final int SEND_TOALL = 0;
 
@@ -138,9 +132,9 @@ public class ExternalOpenVPNService extends Service implements StateListener {
 
             if(vpnPermissionIntent != null || neddPassword != 0){
                 Intent shortVPNIntent = new Intent(Intent.ACTION_MAIN);
-                shortVPNIntent.setClass(getBaseContext(), de.blinkt.openvpn.LaunchVPN.class);
-                shortVPNIntent.putExtra(de.blinkt.openvpn.LaunchVPN.EXTRA_KEY, vp.getUUIDString());
-                shortVPNIntent.putExtra(de.blinkt.openvpn.LaunchVPN.EXTRA_HIDELOG, true);
+                shortVPNIntent.setClass(getBaseContext(), LaunchVPN.class);
+                shortVPNIntent.putExtra(LaunchVPN.EXTRA_KEY, vp.getUUIDString());
+                shortVPNIntent.putExtra(LaunchVPN.EXTRA_HIDELOG, true);
                 shortVPNIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(shortVPNIntent);
             } else {
@@ -154,38 +148,14 @@ public class ExternalOpenVPNService extends Service implements StateListener {
             mExtAppDb.checkOpenVPNPermission(getPackageManager());
 
             VpnProfile vp = ProfileManager.get(getBaseContext(), profileUUID);
-            if (vp.checkProfile(getApplicationContext()) != R.string.no_error_found)
-                throw new RemoteException(getString(vp.checkProfile(getApplicationContext())));
+//            if (vp.checkProfile(getApplicationContext()) != R.string.no_error_found)
+//                throw new RemoteException(getString(vp.checkProfile(getApplicationContext())));
 
             startProfile(vp);
         }
 
         public void startVPN(String inlineConfig) throws RemoteException {
             String callingApp = mExtAppDb.checkOpenVPNPermission(getPackageManager());
-
-            ConfigParser cp = new ConfigParser();
-            try {
-                cp.parseConfig(new StringReader(inlineConfig));
-                VpnProfile vp = cp.convertProfile();
-                vp.mName = "Remote APP VPN";
-                if (vp.checkProfile(getApplicationContext()) != R.string.no_error_found)
-                    throw new RemoteException(getString(vp.checkProfile(getApplicationContext())));
-
-                vp.mProfileCreator = callingApp;
-
-
-                /*int needpw = vp.needUserPWInput(false);
-                if(needpw !=0)
-                    throw new RemoteException("The inline file would require user input: " + getString(needpw));
-                    */
-
-                ProfileManager.setTemporaryProfile(ExternalOpenVPNService.this, vp);
-
-                startProfile(vp);
-
-            } catch (IOException | ConfigParseError e) {
-                throw new RemoteException(e.getMessage());
-            }
         }
 
 
@@ -201,7 +171,7 @@ public class ExternalOpenVPNService extends Service implements StateListener {
 
             ConfigParser cp = new ConfigParser();
             try {
-                cp.parseConfig(new StringReader(config));
+                //cp.parseConfig(new StringReader(config));
                 VpnProfile vp = cp.convertProfile();
                 vp.mName = name;
                 vp.mProfileCreator = callingPackage;
@@ -214,7 +184,7 @@ public class ExternalOpenVPNService extends Service implements StateListener {
             } catch (IOException e) {
                 VpnStatus.logException(e);
                 return null;
-            } catch (ConfigParseError e) {
+            } catch (ConfigParser.ConfigParseError e) {
                 VpnStatus.logException(e);
                 return null;
             }

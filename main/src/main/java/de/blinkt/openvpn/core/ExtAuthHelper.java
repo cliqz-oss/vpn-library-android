@@ -5,13 +5,18 @@
 
 package de.blinkt.openvpn.core;
 
+import android.annotation.TargetApi;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.os.*;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.IBinder;
+import android.os.Looper;
+import android.os.RemoteException;
 import android.security.KeyChainException;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -19,7 +24,6 @@ import android.support.annotation.WorkerThread;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
-import de.blinkt.openvpn.api.ExternalCertificateProvider;
 
 import java.io.ByteArrayInputStream;
 import java.io.Closeable;
@@ -27,9 +31,14 @@ import java.io.UnsupportedEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Vector;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import de.blinkt.openvpn.api.ExternalCertificateProvider;
 
 public class ExtAuthHelper {
 
@@ -103,6 +112,7 @@ public class ExtAuthHelper {
 
     }
 
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     @Nullable
     @WorkerThread
     public static byte[] signData(@NonNull Context context,
@@ -123,6 +133,7 @@ public class ExtAuthHelper {
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     @Nullable
     @WorkerThread
     public static X509Certificate[] getCertificateChain(@NonNull Context context,
@@ -144,6 +155,7 @@ public class ExtAuthHelper {
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     public static Bundle getCertificateMetaData(@NonNull Context context,
                                                 @NonNull String extAuthPackageName,
                                                 String alias) throws KeyChainException

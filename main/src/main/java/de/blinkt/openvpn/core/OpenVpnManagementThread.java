@@ -5,6 +5,7 @@
 
 package de.blinkt.openvpn.core;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.net.LocalServerSocket;
@@ -14,12 +15,8 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.ParcelFileDescriptor;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
-import android.system.ErrnoException;
 import android.system.Os;
 import android.util.Log;
-import de.blinkt.openvpn.R;
-import de.blinkt.openvpn.VpnProfile;
 
 import java.io.FileDescriptor;
 import java.io.IOException;
@@ -28,7 +25,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.Locale;
+import java.util.Vector;
+
+import de.blinkt.openvpn.VpnProfile;
 
 public class OpenVpnManagementThread implements Runnable, OpenVPNManagement {
 
@@ -48,11 +51,19 @@ public class OpenVpnManagementThread implements Runnable, OpenVPNManagement {
     private pauseReason lastPauseReason = pauseReason.noNetwork;
     private PausedStateCallback mPauseCallback;
     private boolean mShuttingDown;
-    private Runnable mResumeHoldRunnable = () -> {
-        if (shouldBeRunning()) {
-            releaseHoldCmd();
+    private Runnable mResumeHoldRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (shouldBeRunning()) {
+                releaseHoldCmd();
+            }
         }
     };
+//    private Runnable mResumeHoldRunnable = () -> {
+//        if (shouldBeRunning()) {
+//            releaseHoldCmd();
+//        }
+//    };
     private Runnable orbotStatusTimeOutRunnable = new Runnable() {
         @Override
         public void run() {
@@ -258,7 +269,7 @@ public class OpenVpnManagementThread implements Runnable, OpenVPNManagement {
 
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void fdCloseLollipop(FileDescriptor fd) {
         try {
             Os.close(fd);
@@ -405,13 +416,13 @@ public class OpenVpnManagementThread implements Runnable, OpenVPNManagement {
         int waittime = Integer.parseInt(argument.split(":")[1]);
         if (shouldBeRunning()) {
             if (waittime > 1)
-                VpnStatus.updateStateString("CONNECTRETRY", String.valueOf(waittime),
-                        R.string.state_waitconnectretry, ConnectionStatus.LEVEL_CONNECTING_NO_SERVER_REPLY_YET);
+//                VpnStatus.updateStateString("CONNECTRETRY", String.valueOf(waittime),
+//                        R.string.state_waitconnectretry, ConnectionStatus.LEVEL_CONNECTING_NO_SERVER_REPLY_YET);
             mResumeHandler.postDelayed(mResumeHoldRunnable, waittime * 1000);
-            if (waittime > 5)
-                VpnStatus.logInfo(R.string.state_waitconnectretry, String.valueOf(waittime));
-            else
-                VpnStatus.logDebug(R.string.state_waitconnectretry, String.valueOf(waittime));
+//            if (waittime > 5)
+//                VpnStatus.logInfo(R.string.state_waitconnectretry, String.valueOf(waittime));
+//            else
+//                VpnStatus.logDebug(R.string.state_waitconnectretry, String.valueOf(waittime));
 
         } else {
             VpnStatus.updateStatePause(lastPauseReason);
@@ -488,7 +499,7 @@ public class OpenVpnManagementThread implements Runnable, OpenVPNManagement {
 
 
         if (proxyType == Connection.ProxyType.ORBOT) {
-            VpnStatus.updateStateString("WAIT_ORBOT", "Waiting for Orbot to start", R.string.state_waitorbot, ConnectionStatus.LEVEL_CONNECTING_NO_SERVER_REPLY_YET);
+            //VpnStatus.updateStateString("WAIT_ORBOT", "Waiting for Orbot to start", R.string.state_waitorbot, ConnectionStatus.LEVEL_CONNECTING_NO_SERVER_REPLY_YET);
             OrbotHelper orbotHelper = OrbotHelper.get(mOpenVPNService);
             if (!orbotHelper.checkTorReceier(mOpenVPNService))
                 VpnStatus.logError("Orbot does not seem to be installed!");
@@ -506,7 +517,7 @@ public class OpenVpnManagementThread implements Runnable, OpenVPNManagement {
     private void sendProxyCMD(Connection.ProxyType proxyType, String proxyname, String proxyport, boolean usePwAuth) {
         if (proxyType != Connection.ProxyType.NONE && proxyname != null) {
 
-            VpnStatus.logInfo(R.string.using_proxy, proxyname, proxyname);
+            //VpnStatus.logInfo(R.string.using_proxy, proxyname, proxyname);
 
             String pwstr =  usePwAuth ? " auto" : "";
 
@@ -709,14 +720,14 @@ public class OpenVpnManagementThread implements Runnable, OpenVPNManagement {
             String cmd = String.format("password '%s' %s\n", needed, VpnProfile.openVpnEscape(pw));
             managmentCommand(cmd);
         } else {
-            mOpenVPNService.requestInputFromUser(R.string.password, needed);
+            //mOpenVPNService.requestInputFromUser(R.string.password, needed);
             VpnStatus.logError(String.format("Openvpn requires Authentication type '%s' but no password/key information available", needed));
         }
 
     }
 
     private void proccessPWFailed(String needed, String args) {
-        VpnStatus.updateStateString("AUTH_FAILED", needed + args, R.string.state_auth_failed, ConnectionStatus.LEVEL_AUTH_FAILED);
+        //VpnStatus.updateStateString("AUTH_FAILED", needed + args, R.string.state_auth_failed, ConnectionStatus.LEVEL_AUTH_FAILED);
     }
 
     @Override

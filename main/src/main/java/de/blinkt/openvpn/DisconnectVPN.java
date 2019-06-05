@@ -3,7 +3,7 @@
  * Distributed under the GNU GPL v2 with additional terms. For full terms see the file doc/LICENSE.txt
  */
 
-package de.blinkt.openvpn.activities;
+package de.blinkt.openvpn;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -15,8 +15,6 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.os.RemoteException;
 
-import de.blinkt.openvpn.LaunchVPN;
-import de.blinkt.openvpn.R;
 import de.blinkt.openvpn.core.IOpenVPNServiceInternal;
 import de.blinkt.openvpn.core.OpenVPNService;
 import de.blinkt.openvpn.core.ProfileManager;

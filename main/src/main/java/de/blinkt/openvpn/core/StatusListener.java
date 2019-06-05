@@ -13,6 +13,9 @@ import android.os.IBinder;
 import android.os.ParcelFileDescriptor;
 import android.os.RemoteException;
 
+import de.blinkt.openvpn.core.IServiceStatus;
+import de.blinkt.openvpn.core.IStatusCallbacks;
+
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -69,7 +72,7 @@ public class StatusListener {
 
     };
 
-    void init(Context c) {
+    public void init(Context c) {
 
         Intent intent = new Intent(c, OpenVPNStatusService.class);
         intent.setAction(OpenVPNService.START_SERVICE);

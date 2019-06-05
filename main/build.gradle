@@ -2,10 +2,7 @@
  * Copyright (c) 2012-2016 Arne Schwabe
  * Distributed under the GNU GPL v2 with additional terms. For full terms see the file doc/LICENSE.txt
  */
-
-import com.android.builder.model.ProductFlavor
-
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 
 apply plugin: 'checkstyle'
 checkstyle {
@@ -149,12 +146,12 @@ if (project.hasProperty('keystoreFile') &&
 }
 
 // Ensure native build is run before assets, so assets are ready to be merged into the apk
-android.applicationVariants.all { variant ->
+android.libraryVariants.all { variant ->
     variant.mergeAssets.dependsOn(variant.externalNativeBuildTasks)
 }
 
 
-android.applicationVariants.all { variant ->
+android.libraryVariants.all { variant ->
     variant.productFlavors.each {
         if (it.dimension == 'implementation' &&  it.name != 'noovpn3')
             variant.getJavaCompiler().dependsOn(generateOpenVPN3Swig)

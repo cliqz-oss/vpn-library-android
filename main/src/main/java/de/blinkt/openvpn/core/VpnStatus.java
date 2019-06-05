@@ -9,18 +9,17 @@ import android.content.Context;
 import android.os.Build;
 import android.os.HandlerThread;
 import android.os.Message;
+import android.util.Log;
 
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.LinkedList;
 import java.util.Locale;
-import java.util.Queue;
 import java.util.Vector;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 import de.blinkt.openvpn.R;
-import de.blinkt.openvpn.VpnProfile;
+
 
 public class VpnStatus {
 
@@ -41,7 +40,7 @@ public class VpnStatus {
 
     private static String mLastConnectedVPNUUID;
     static boolean readFileLog =false;
-    final static java.lang.Object readFileLock = new Object();
+    final static Object readFileLock = new Object();
 
 
     public static TrafficHistory trafficHistory;
@@ -70,6 +69,17 @@ public class VpnStatus {
 
     public static boolean isVPNActive() {
         return mLastLevel != ConnectionStatus.LEVEL_AUTH_FAILED && !(mLastLevel == ConnectionStatus.LEVEL_NOTCONNECTED);
+    }
+
+    public static boolean isVPNConnected() {
+        return mLastLevel == ConnectionStatus.LEVEL_CONNECTED;
+    }
+
+    public static boolean isVPNConnecting() {
+        return mLastLevel == ConnectionStatus.LEVEL_CONNECTING_NO_SERVER_REPLY_YET ||
+                mLastLevel == ConnectionStatus.LEVEL_CONNECTING_SERVER_REPLIED ||
+                mLastLevel == ConnectionStatus.LEVEL_START ||
+                mLastLevel == ConnectionStatus.LEVEL_VPNPAUSED;
     }
 
     public static String getLastCleanLogMessage(Context c) {
@@ -326,7 +336,8 @@ public class VpnStatus {
     private static ConnectionStatus getLevel(String state) {
         String[] noreplyet = {"CONNECTING", "WAIT", "RECONNECTING", "RESOLVE", "TCP_CONNECT"};
         String[] reply = {"AUTH", "GET_CONFIG", "ASSIGN_IP", "ADD_ROUTES", "AUTH_PENDING"};
-        String[] connected = {"CONNECTED"};
+        String[] connected = {
+                "CONNECTED"};
         String[] notconnected = {"DISCONNECTED", "EXITING"};
 
         for (String x : noreplyet)
@@ -430,10 +441,11 @@ public class VpnStatus {
         }
 
         //if (BuildConfig.DEBUG && !cachedLine && !BuildConfig.FLAVOR.equals("test"))
-        //    Log.d("OpenVPN", logItem.getString(null));
+        Log.d("OpenVPN", logItem.getString(null));
 
 
         for (LogListener ll : logListener) {
+            Log.d("######", "sending messages to everyone: " + logItem.toString());
             ll.newLog(logItem);
         }
     }

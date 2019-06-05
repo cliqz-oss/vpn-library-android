@@ -9,16 +9,16 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.util.Log;
+
+import de.blinkt.openvpn.VpnProfile;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.Vector;
 
-import de.blinkt.openvpn.R;
-import de.blinkt.openvpn.VpnProfile;
 
 public class VPNLaunchHelper {
     private static final String MININONPIEVPN = "nopie_openvpn";
@@ -36,13 +36,14 @@ public class VPNLaunchHelper {
 
         String nativeAPI = NativeUtils.getNativeAPI();
         if (!nativeAPI.equals(abis[0])) {
-            VpnStatus.logWarning(R.string.abi_mismatch, Arrays.toString(abis), nativeAPI);
+            //VpnStatus.logWarning(R.string.abi_mismatch, Arrays.toString(abis), nativeAPI);
             abis = new String[]{nativeAPI};
         }
 
         for (String abi : abis) {
-
+            Log.d("###########", abi);
             File vpnExecutable = new File(context.getCacheDir(), "c_" + getMiniVPNExecutableName() + "." + abi);
+            Log.d("#############", vpnExecutable.getPath());
             if ((vpnExecutable.exists() && vpnExecutable.canExecute()) || writeMiniVPNBinary(context, abi, vpnExecutable)) {
                 return vpnExecutable.getPath();
             }
@@ -130,13 +131,14 @@ public class VPNLaunchHelper {
     public static void startOpenVpn(VpnProfile startprofile, Context context) {
         Intent startVPN = startprofile.prepareStartService(context);
         if (startVPN != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                //noinspection NewApi
-                context.startForegroundService(startVPN);
-            else
+//            if (Build.VERSION.SDK_INT >= 25)
+//                //noinspection NewApi
+//                context.startForegroundService(startVPN);
+           // else
                 context.startService(startVPN);
 
         }
+
     }
 
 

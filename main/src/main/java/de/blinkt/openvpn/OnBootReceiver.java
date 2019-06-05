@@ -13,10 +13,7 @@ import android.content.SharedPreferences;
 import de.blinkt.openvpn.core.Preferences;
 import de.blinkt.openvpn.core.ProfileManager;
 
-
 public class OnBootReceiver extends BroadcastReceiver {
-
-
 
 	// Debug: am broadcast -a android.intent.action.BOOT_COMPLETED
 	@Override
@@ -33,7 +30,7 @@ public class OnBootReceiver extends BroadcastReceiver {
 			VpnProfile bootProfile = ProfileManager.getAlwaysOnVPN(context);
 			if(bootProfile != null) {
 				launchVPN(bootProfile, context);
-			}		
+			}
 		}
 	}
 

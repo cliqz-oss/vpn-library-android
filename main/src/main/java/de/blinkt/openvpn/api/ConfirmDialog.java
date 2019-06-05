@@ -18,31 +18,18 @@ package de.blinkt.openvpn.api;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnShowListener;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
-import android.os.Bundle;
 import android.os.IBinder;
-import android.os.PersistableBundle;
 import android.os.RemoteException;
-import android.support.annotation.Nullable;
-import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import de.blinkt.openvpn.R;
 import de.blinkt.openvpn.core.IOpenVPNServiceInternal;
 import de.blinkt.openvpn.core.OpenVPNService;
-
 
 public class ConfirmDialog extends Activity implements
         CompoundButton.OnCheckedChangeListener, DialogInterface.OnClickListener {
@@ -90,53 +77,6 @@ public class ConfirmDialog extends Activity implements
                 finish();
                 return;
             }
-        }
-
-        try {
-            View view = View.inflate(this, R.layout.api_confirm, null);
-            CharSequence appString;
-            if (mPackage.equals(ANONYMOUS_PACKAGE)) {
-                appString = getString(R.string.all_app_prompt, getString(R.string.app));
-            } else {
-                PackageManager pm = getPackageManager();
-                ApplicationInfo app = pm.getApplicationInfo(mPackage, 0);
-                appString = getString(R.string.prompt, app.loadLabel(pm), getString(R.string.app));
-                ((ImageView) view.findViewById(R.id.icon)).setImageDrawable(app.loadIcon(pm));
-            }
-
-
-            ((TextView) view.findViewById(R.id.prompt)).setText(appString);
-            ((CompoundButton) view.findViewById(R.id.check)).setOnCheckedChangeListener(this);
-
-
-            Builder builder = new AlertDialog.Builder(this);
-
-            builder.setView(view);
-
-            builder.setIconAttribute(android.R.attr.alertDialogIcon);
-            builder.setTitle(android.R.string.dialog_alert_title);
-            builder.setPositiveButton(android.R.string.ok, this);
-            builder.setNegativeButton(android.R.string.cancel, this);
-
-            mAlert = builder.create();
-            mAlert.setCanceledOnTouchOutside(false);
-
-            mAlert.setOnShowListener(new OnShowListener() {
-                @Override
-                public void onShow(DialogInterface dialog) {
-                    mButton = mAlert.getButton(DialogInterface.BUTTON_POSITIVE);
-                    mButton.setEnabled(false);
-
-                }
-            });
-
-            //setCloseOnTouchOutside(false);
-
-            mAlert.show();
-
-        } catch (Exception e) {
-            Log.e(TAG, "onResume", e);
-            finish();
         }
     }
 

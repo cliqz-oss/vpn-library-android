@@ -3,10 +3,9 @@
  * Distributed under the GNU GPL v2 with additional terms. For full terms see the file doc/LICENSE.txt
  */
 
-package de.blinkt.openvpn.fragments;
+package de.blinkt.openvpn;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,6 +18,8 @@ import android.provider.OpenableColumns;
 import android.util.Base64;
 import android.webkit.MimeTypeMap;
 
+import de.blinkt.openvpn.core.Preferences;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,11 +27,8 @@ import java.util.List;
 import java.util.TreeSet;
 import java.util.Vector;
 
-import de.blinkt.openvpn.VpnProfile;
-import de.blinkt.openvpn.core.Preferences;
 
 public class Utils {
-
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
     public static Intent getFilePickerIntent(Context c, FileType fileType) {
@@ -122,7 +120,7 @@ public class Utils {
 
         /* Samsung has decided to do something strange, on stock Android GET_CONTENT opens the document UI */
         /* fist try with documentsui */
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N)
+        if (Build.VERSION.SDK_INT <= 24)
             i.setPackage("com.android.documentsui");
 
 

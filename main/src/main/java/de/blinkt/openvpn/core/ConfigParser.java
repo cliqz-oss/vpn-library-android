@@ -5,7 +5,6 @@
 
 package de.blinkt.openvpn.core;
 
-import android.os.Build;
 import android.support.v4.util.Pair;
 import android.text.TextUtils;
 
@@ -13,9 +12,16 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Vector;
 
 import de.blinkt.openvpn.VpnProfile;
+
 
 //! Openvpn Config FIle Parser, probably not 100% accurate but close enough
 
@@ -199,7 +205,7 @@ public class ConfigParser {
                 }
                 options.get(optionname).add(args);
             }
-        } catch (java.lang.OutOfMemoryError memoryError) {
+        } catch (OutOfMemoryError memoryError) {
             throw new ConfigParseError("File too large to parse: " + memoryError.getLocalizedMessage());
         }
     }
@@ -734,10 +740,7 @@ public class ConfigParser {
     }
 
     private String join(String s, Vector<String> str) {
-        if (Build.VERSION.SDK_INT > 26)
-            return String.join(s, str);
-        else
-            return TextUtils.join(s, str);
+        return TextUtils.join(s, str);
     }
 
     private Pair<Connection, Connection[]> parseConnection(String connection, Connection defaultValues) throws IOException, ConfigParseError {

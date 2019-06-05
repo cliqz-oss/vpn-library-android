@@ -6,13 +6,17 @@
 package de.blinkt.openvpn.api;
 
 import android.annotation.TargetApi;
-import android.content.*;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.RestrictionsManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
+
 import de.blinkt.openvpn.VpnProfile;
 import de.blinkt.openvpn.core.ConfigParser;
-import de.blinkt.openvpn.core.Connection;
 import de.blinkt.openvpn.core.ProfileManager;
 import de.blinkt.openvpn.core.VpnStatus;
 
@@ -21,12 +25,15 @@ import java.io.StringReader;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
-
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
+import java.util.UUID;
+import java.util.Vector;
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class AppRestrictions {
-    public static final String PROFILE_CREATOR = "de.blinkt.openvpn.api.AppRestrictions";
+    public static final String PROFILE_CREATOR = "AppRestrictions";
     final static int CONFIG_VERSION = 1;
     static boolean alreadyChecked = false;
     private static AppRestrictions mInstance;

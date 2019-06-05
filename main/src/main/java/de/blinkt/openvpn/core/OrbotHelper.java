@@ -24,6 +24,7 @@
 
 package de.blinkt.openvpn.core;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -36,8 +37,6 @@ import android.text.TextUtils;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import static de.blinkt.openvpn.core.OpenVPNService.ORBOT_PACKAGE_NAME;
 
 public class OrbotHelper {
     //! Based on the class from NetCipher but stripped down and modified for icsopenvpn
@@ -62,6 +61,7 @@ public class OrbotHelper {
     public final static String ACTION_START = "org.torproject.android.intent.action.START";
     public final static String EXTRA_PACKAGE_NAME = "org.torproject.android.intent.extra.PACKAGE_NAME";
     public static final int SOCKS_PROXY_PORT_DEFAULT = 9050;
+    @SuppressLint("StaticFieldLeak")
     private static OrbotHelper mInstance;
 
     String EXTRA_SOCKS_PROXY_HOST = "org.torproject.android.intent.extra.SOCKS_PROXY_HOST";
@@ -112,7 +112,7 @@ public class OrbotHelper {
      */
     public static Intent getOrbotStartIntent(Context context) {
         Intent intent = new Intent(ACTION_START);
-        intent.setPackage(ORBOT_PACKAGE_NAME);
+        intent.setPackage(OpenVPNService.ORBOT_PACKAGE_NAME);
         intent.putExtra(EXTRA_PACKAGE_NAME, context.getPackageName());
         return intent;
     }
@@ -166,7 +166,7 @@ public class OrbotHelper {
 
     private void startOrbotService(String action) {
         Intent clearVPNMode = new Intent();
-        clearVPNMode.setComponent(new ComponentName(ORBOT_PACKAGE_NAME, ".service.TorService"));
+        clearVPNMode.setComponent(new ComponentName(OpenVPNService.ORBOT_PACKAGE_NAME, ".service.TorService"));
         clearVPNMode.setAction(action);
         mContext.startService(clearVPNMode);
     }

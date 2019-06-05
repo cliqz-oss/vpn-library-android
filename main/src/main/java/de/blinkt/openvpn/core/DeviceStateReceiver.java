@@ -13,18 +13,11 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.NetworkInfo.State;
 import android.os.Handler;
-import android.preference.PreferenceManager;
-
-import de.blinkt.openvpn.R;
-import de.blinkt.openvpn.core.VpnStatus.ByteCountListener;
 
 import java.util.LinkedList;
-import java.util.Objects;
-import java.util.StringTokenizer;
 
-import static de.blinkt.openvpn.core.OpenVPNManagement.pauseReason;
 
-public class DeviceStateReceiver extends BroadcastReceiver implements ByteCountListener, OpenVPNManagement.PausedStateCallback {
+public class DeviceStateReceiver extends BroadcastReceiver implements VpnStatus.ByteCountListener, OpenVPNManagement.PausedStateCallback {
     private final Handler mDisconnectHandler;
     private int lastNetwork = -1;
     private OpenVPNManagement mManagement;
@@ -43,7 +36,7 @@ public class DeviceStateReceiver extends BroadcastReceiver implements ByteCountL
     connectState userpause = connectState.SHOULDBECONNECTED;
 
     private String lastStateMsg = null;
-    private java.lang.Runnable mDelayDisconnectRunnable = new Runnable() {
+    private Runnable mDelayDisconnectRunnable = new Runnable() {
         @Override
         public void run() {
             if (!(network == connectState.PENDINGDISCONNECT))
@@ -102,8 +95,8 @@ public class DeviceStateReceiver extends BroadcastReceiver implements ByteCountL
 
         if (windowtraffic < TRAFFIC_LIMIT) {
             screen = connectState.DISCONNECTED;
-            VpnStatus.logInfo(R.string.screenoff_pause,
-                    "64 kB", TRAFFIC_WINDOW);
+//            VpnStatus.logInfo(R.string.screenoff_pause,
+//                    "64 kB", TRAFFIC_WINDOW);
 
             mManagement.pause(getPauseReason());
         }
@@ -145,8 +138,8 @@ public class DeviceStateReceiver extends BroadcastReceiver implements ByteCountL
             boolean screenOffPause = prefs.getBoolean("screenoff", false);
 
             if (screenOffPause) {
-                if (ProfileManager.getLastConnectedVpn() != null && !ProfileManager.getLastConnectedVpn().mPersistTun)
-                    VpnStatus.logError(R.string.screen_nopersistenttun);
+//                if (ProfileManager.getLastConnectedVpn() != null && !ProfileManager.getLastConnectedVpn().mPersistTun)
+//                    VpnStatus.logError(R.string.screen_nopersistenttun);
 
                 screen = connectState.PENDINGDISCONNECT;
                 fillTrafficData();
@@ -260,8 +253,8 @@ public class DeviceStateReceiver extends BroadcastReceiver implements ByteCountL
         }
 
 
-        if (!netstatestring.equals(lastStateMsg))
-            VpnStatus.logInfo(R.string.netstatus, netstatestring);
+//        if (!netstatestring.equals(lastStateMsg))
+//            VpnStatus.logInfo(R.string.netstatus, netstatestring);
         VpnStatus.logDebug(String.format("Debug state info: %s, pause: %s, shouldbeconnected: %s, network: %s ",
                 netstatestring, getPauseReason(), shouldBeConnected(), network));
         lastStateMsg = netstatestring;
@@ -278,17 +271,17 @@ public class DeviceStateReceiver extends BroadcastReceiver implements ByteCountL
                 network == connectState.SHOULDBECONNECTED);
     }
 
-    private pauseReason getPauseReason() {
+    private OpenVPNManagement.pauseReason getPauseReason() {
         if (userpause == connectState.DISCONNECTED)
-            return pauseReason.userPause;
+            return OpenVPNManagement.pauseReason.userPause;
 
         if (screen == connectState.DISCONNECTED)
-            return pauseReason.screenOff;
+            return OpenVPNManagement.pauseReason.screenOff;
 
         if (network == connectState.DISCONNECTED)
-            return pauseReason.noNetwork;
+            return OpenVPNManagement.pauseReason.noNetwork;
 
-        return pauseReason.userPause;
+        return OpenVPNManagement.pauseReason.userPause;
     }
 
     private NetworkInfo getCurrentNetworkInfo(Context context) {
