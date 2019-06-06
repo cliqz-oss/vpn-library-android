@@ -153,5 +153,6 @@ android.libraryVariants.all { variant ->
             variant.getJavaCompiler().dependsOn(generateOpenVPN3Swig)
 
     }
-
 }
+
+apply from: 'publish.gradle'
