@@ -17,6 +17,7 @@ import android.security.KeyChain;
 import android.security.KeyChainException;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.text.TextUtils;
 import android.util.Base64;
 
@@ -171,6 +172,7 @@ public class VpnProfile implements Serializable, Cloneable {
     // set members to default values
     private UUID mUuid;
     private int mProfileVersion;
+    public @StringRes int profileNameRes;
 
 
     public VpnProfile(String name) {

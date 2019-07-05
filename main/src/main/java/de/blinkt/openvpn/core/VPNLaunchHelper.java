@@ -11,13 +11,13 @@ import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
 
-import de.blinkt.openvpn.VpnProfile;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Vector;
+
+import de.blinkt.openvpn.VpnProfile;
 
 
 public class VPNLaunchHelper {
@@ -127,20 +127,17 @@ public class VPNLaunchHelper {
 
     }
 
-
     public static void startOpenVpn(VpnProfile startprofile, Context context) {
         Intent startVPN = startprofile.prepareStartService(context);
         if (startVPN != null) {
-//            if (Build.VERSION.SDK_INT >= 25)
-//                //noinspection NewApi
-//                context.startForegroundService(startVPN);
-           // else
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                //noinspection NewApi
+                context.startForegroundService(startVPN);
+            } else {
                 context.startService(startVPN);
-
+            }
         }
-
     }
-
 
     public static String getConfigFilePath(Context context) {
         return context.getCacheDir().getAbsolutePath() + "/" + OVPNCONFIGFILE;
