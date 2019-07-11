@@ -33,6 +33,7 @@ import android.os.ParcelFileDescriptor;
 import android.os.RemoteException;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.annotation.StringRes;
 import android.system.OsConstants;
 import android.text.TextUtils;
@@ -230,6 +231,7 @@ public class OpenVPNService extends VpnService implements VpnStatus.StateListene
         @StringRes int notificationTitle = -1;
         @StringRes int notificationContent = -1;
         @DrawableRes int icon = -1;
+        String packageName = "";
         try {
             final ComponentName myService = new ComponentName(this, this.getClass());
             final Bundle bundle = getPackageManager().getServiceInfo(myService, PackageManager.GET_META_DATA).metaData;
@@ -240,6 +242,7 @@ public class OpenVPNService extends VpnService implements VpnStatus.StateListene
             notificationTitle = bundle.getInt("notification_title");
             notificationContent = bundle.getInt("notification_content");
             icon = bundle.getInt("notification_icon");
+            packageName = bundle.getString("app_package_name");
         } catch (Exception e) {
             Log.e("OpenVPNService", "Dear developer. Don't forget to configure meta-data " +
                     "android:name=\"notification_title\" " +
@@ -272,6 +275,11 @@ public class OpenVPNService extends VpnService implements VpnStatus.StateListene
             nbuilder.setContentIntent(getUserInputIntent(msg));
         else
             nbuilder.setContentIntent(getGraphPendingIntent());
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            jbNotificationExtras(priority, nbuilder);
+            addVpnActionsToNotification(nbuilder, packageName);
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             lpNotificationExtras(nbuilder, Notification.CATEGORY_SERVICE);
@@ -349,6 +357,15 @@ public class OpenVPNService extends VpnService implements VpnStatus.StateListene
             VpnStatus.logException(e);
         }
 
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    private void addVpnActionsToNotification(Notification.Builder nbuilder, String packageName) {
+        Intent disconnectVPN = getPackageManager().getLaunchIntentForPackage(packageName);
+        disconnectVPN.setAction(DISCONNECT_VPN);
+        PendingIntent disconnectPendingIntent = PendingIntent.getActivity(this, 0, disconnectVPN, 0);
+        nbuilder.addAction(android.R.drawable.ic_menu_close_clear_cancel,
+                getString(R.string.cancel_connection), disconnectPendingIntent);
     }
 
     PendingIntent getUserInputIntent(String needed) {

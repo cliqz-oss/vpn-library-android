@@ -445,7 +445,6 @@ public class VpnStatus {
 
 
         for (LogListener ll : logListener) {
-            Log.d("######", "sending messages to everyone: " + logItem.toString());
             ll.newLog(logItem);
         }
     }
