@@ -45,9 +45,14 @@ public class ConfigConverter {
 
     private String mEmbeddedPwFile;
     private Context mContext;
+    private OnProfileImportListener mOnProfileImportListener;
 
     public ConfigConverter(Context context) {
         mContext = context;
+    }
+
+    public interface OnProfileImportListener {
+        public void onProfileImported();
     }
 
     private void saveProfile() {
@@ -60,6 +65,10 @@ public class ConfigConverter {
         vpl.saveProfile(mContext, mResult);
         vpl.saveProfileList(mContext);
         result.putExtra(VpnProfile.EXTRA_PROFILEUUID, mResult.getUUID().toString());
+    }
+
+    public void setOnProfileImportListener(OnProfileImportListener onProfileImportListener) {
+        mOnProfileImportListener = onProfileImportListener;
     }
 
     private String getUniqueProfileName(String possibleName) {
@@ -253,6 +262,9 @@ public class ConfigConverter {
                 if (errorCode == 0) {
                     mResult.mName = getUniqueProfileName(possibleName);
                     saveProfile();
+                    if (mOnProfileImportListener != null) {
+                        mOnProfileImportListener.onProfileImported();
+                    }
                 }
             }
         }.execute();
